@@ -4,6 +4,20 @@ Focused AWS Terraform showcase with reusable modules, remote state, and three re
 
 Important trade-off: LocalStack Community does not implement `RDS`, so the local demo uses three PostgreSQL containers as environment-specific stand-ins while Terraform still models the `RDS PostgreSQL` contract and keeps the AWS module boundaries intact.
 
+## Portfolio Role
+
+This is the IaC flagship in the portfolio.
+
+Use this repository when the review focus is:
+
+- Terraform module boundaries
+- remote state and locking
+- multi-environment lifecycle
+- promotion through environment roots instead of ad hoc tfvars usage
+- security-oriented validation around infrastructure code
+
+In the broader portfolio this repo covers the provisioning and state-management side, while `enterprise-onprem-platform-lab` covers runtime platform operations after infrastructure is in place.
+
 ## What this project shows
 
 - AWS provider with one clear demo scope: `network + IAM + one app host + RDS PostgreSQL + remote state`
@@ -34,6 +48,17 @@ Important trade-off: LocalStack Community does not implement `RDS`, so the local
 |-- docs/
 `-- runbooks/
 ```
+
+## Review Path
+
+For a fast review, the most useful path is:
+
+1. this README for scope and LocalStack trade-offs
+2. [docs/architecture.md](docs/architecture.md) for dependency shape
+3. `modules/` for reusable boundaries
+4. `environments/dev`, `environments/stage`, and `environments/demo` for promotion model
+5. [runbooks/apply-destroy-import.md](runbooks/apply-destroy-import.md) for operator flow
+6. `.github/workflows/ci.yml` for validation and security scan
 
 ## Quick demo flow
 
