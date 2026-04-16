@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  terraform-lab:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start LocalStack
+        run: docker compose up -d localstack
+
+      - name: Wait for LocalStack
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:4566/_localstack/health | grep '"s3": "running"' >/dev/null && curl -fsS http://127.0.0.1:4566/_localstack/health | grep '"dynamodb": "running"' >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "LocalStack did not become ready" >&2
+          exit 1
+
+      - name: Terraform fmt
+        run: docker compose run --rm terraform fmt -check -recursive
+
+      - name: Bootstrap remote state
+        run: |
+          docker compose run --rm terraform -chdir=bootstrap init -input=false
+          docker compose run --rm terraform -chdir=bootstrap apply -auto-approve -input=false
+
+      - name: Validate dev
+        run: |
+          docker compose run --rm terraform -chdir=environments/dev init -input=false -reconfigure -backend-config=backend.hcl
+          docker compose run --rm terraform -chdir=environments/dev validate
+          docker compose run --rm terraform -chdir=environments/dev plan -input=false
+
+      - name: Validate stage
+        run: |
+          docker compose run --rm terraform -chdir=environments/stage init -input=false -reconfigure -backend-config=backend.hcl
+          docker compose run --rm terraform -chdir=environments/stage validate
+          docker compose run --rm terraform -chdir=environments/stage plan -input=false
+
+      - name: Validate demo
+        run: |
+          docker compose run --rm terraform -chdir=environments/demo init -input=false -reconfigure -backend-config=backend.hcl
+          docker compose run --rm terraform -chdir=environments/demo validate
+          docker compose run --rm terraform -chdir=environments/demo plan -input=false
+
+      - name: Trivy config scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: config
+          scan-ref: .
+
+      - name: Compose down
+        if: always()
+        run: docker compose down -v --remove-orphans

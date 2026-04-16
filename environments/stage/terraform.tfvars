@@ -1,0 +1,15 @@
+environment          = "stage"
+vpc_cidr             = "10.50.0.0/16"
+public_subnet_cidrs  = ["10.50.1.0/24", "10.50.2.0/24"]
+private_subnet_cidrs = ["10.50.11.0/24", "10.50.12.0/24"]
+availability_zones   = ["us-east-1a", "us-east-1b"]
+ami_id               = "ami-0c02fb55956c7d316"
+instance_type        = "t3.small"
+db_name              = "appdb"
+db_engine_version    = "16.3"
+db_instance_class    = "db.t3.small"
+db_allocated_storage = 30
+db_username          = "appuser"
+db_password          = "ChangeMe123!"
+db_endpoint_host     = "127.0.0.1"
+db_endpoint_port     = 55434

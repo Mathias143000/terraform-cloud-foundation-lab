@@ -1,0 +1,64 @@
+services:
+  localstack:
+    image: localstack/localstack:3.4
+    container_name: terraform-cloud-foundation-localstack
+    environment:
+      SERVICES: s3,dynamodb,ec2,iam,rds,sts
+      DEBUG: "0"
+      AWS_DEFAULT_REGION: us-east-1
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack-data:/var/lib/localstack
+
+  postgres-dev:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: ChangeMe123!
+    ports:
+      - "55432:5432"
+
+  postgres-stage:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: ChangeMe123!
+    ports:
+      - "55434:5432"
+
+  postgres-demo:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: ChangeMe123!
+    ports:
+      - "55433:5432"
+
+  terraform:
+    image: hashicorp/terraform:1.9.8
+    working_dir: /workspace
+    entrypoint:
+      - terraform
+    environment:
+      TF_IN_AUTOMATION: "true"
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - ./:/workspace
+
+  awscli:
+    image: amazon/aws-cli:2.17.41
+    entrypoint:
+      - aws
+    environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+
+volumes:
+  localstack-data:
