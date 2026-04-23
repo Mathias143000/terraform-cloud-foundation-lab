@@ -132,9 +132,11 @@ The evidence bundle is written to `artifacts/evidence/latest/` and includes:
 - SSH/admin ingress is environment-scoped through `admin_cidr_blocks`, but this remains a lab guardrail rather than a production network access model.
 - The repo demonstrates remote state and environment promotion locally; production cloud rollout would still require a real AWS account.
 
-## Backlog / future improvements
+## Explicit Non-Goals
 
 - Add `SOPS`-managed secrets instead of plain demo tfvars
 - Add a small user-data bootstrap with `cloud-init` validation
 - Add cost notes for the real AWS version of the same design
 - Extend CI with drift-detection scheduled job
+
+These are outside the current DoD so the repo stays focused on Terraform module boundaries, remote state, environment promotion, validation, and repeatable teardown.
