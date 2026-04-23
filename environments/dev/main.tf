@@ -18,10 +18,11 @@ module "network" {
 }
 
 module "security" {
-  source      = "../../modules/security"
-  name_prefix = local.name_prefix
-  vpc_id      = module.network.vpc_id
-  tags        = local.tags
+  source            = "../../modules/security"
+  name_prefix       = local.name_prefix
+  vpc_id            = module.network.vpc_id
+  admin_cidr_blocks = var.admin_cidr_blocks
+  tags              = local.tags
 }
 
 module "iam" {

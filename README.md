@@ -27,6 +27,7 @@ In the broader portfolio this repo covers the provisioning and state-management 
 - environment promotion through separate folders and tfvars
 - Docker-based Terraform workflow for local reproducibility
 - CI validation and Terraform security scan
+- repo-local hardening checks for admin ingress, sensitive variables, backend files, and CI security gates
 
 ## Fixed technology axis
 
@@ -71,6 +72,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-state.ps1
 2. Validate all environments:
 
 ```powershell
+python scripts\hardening_check.py
 powershell -ExecutionPolicy Bypass -File .\scripts\validate.ps1
 ```
 
@@ -108,6 +110,7 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and dependency 
 ## Runbook
 
 See [runbooks/apply-destroy-import.md](runbooks/apply-destroy-import.md) for apply, destroy, import, and drift notes.
+See [docs/hardening.md](docs/hardening.md) for the second-wave hardening checks.
 
 ## Operational evidence
 
@@ -126,6 +129,7 @@ The evidence bundle is written to `artifacts/evidence/latest/` and includes:
 - `EC2` is created through LocalStack, while `RDS PostgreSQL` is represented through a Terraform contract plus three local PostgreSQL stand-ins because Community LocalStack does not implement RDS APIs.
 - LocalStack currently returns the app instance security groups through the attached network interface but leaves the top-level EC2 `SecurityGroups` list empty, so Terraform shows a repeatable in-place diff on `vpc_security_group_ids` after `plan`. This is an emulator quirk, not an unresolved module dependency.
 - Secrets are demo-safe values inside tfvars because the lab is meant to be runnable without external secret stores.
+- SSH/admin ingress is environment-scoped through `admin_cidr_blocks`, but this remains a lab guardrail rather than a production network access model.
 - The repo demonstrates remote state and environment promotion locally; production cloud rollout would still require a real AWS account.
 
 ## Backlog / future improvements

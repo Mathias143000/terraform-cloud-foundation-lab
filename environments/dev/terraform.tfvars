@@ -13,3 +13,4 @@ db_username          = "appuser"
 db_password          = "ChangeMe123!"
 db_endpoint_host     = "127.0.0.1"
 db_endpoint_port     = 55432
+admin_cidr_blocks    = ["10.40.0.0/16"]

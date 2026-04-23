@@ -31,6 +31,9 @@ jobs:
       - name: Terraform fmt
         run: docker compose run --rm terraform fmt -check -recursive
 
+      - name: Hardening policy check
+        run: python scripts/hardening_check.py
+
       - name: Bootstrap remote state
         run: |
           docker compose run --rm terraform -chdir=bootstrap init -input=false

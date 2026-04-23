@@ -18,8 +18,9 @@ variable "aws_access_key" {
 }
 
 variable "aws_secret_key" {
-  type    = string
-  default = "test"
+  type      = string
+  default   = "test"
+  sensitive = true
 }
 
 variable "vpc_cidr" {
@@ -67,7 +68,12 @@ variable "db_username" {
 }
 
 variable "db_password" {
-  type = string
+  type      = string
+  sensitive = true
+}
+
+variable "admin_cidr_blocks" {
+  type = list(string)
 }
 
 variable "db_endpoint_host" {
